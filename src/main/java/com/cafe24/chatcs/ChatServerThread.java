@@ -27,7 +27,9 @@ public class ChatServerThread extends Thread {
 	private String nickname;
 	private Socket socket;
 	public static List<PrintWriter> listWriters;
-//
+	BufferedReader bufferedReader = null;
+	PrintWriter printWriter = null;
+ 
 //
 //	public ChatServerThread(Socket socket) {
 //		this.socket = socket;
@@ -47,19 +49,14 @@ public class ChatServerThread extends Thread {
 		// 1. Remote Host Information
 
 		// 2. 스트림 얻기
-		BufferedReader bufferedReader = null;
-		PrintWriter printWriter = null;
 		try {
-			bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-			printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
+			bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
+			printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "utf-8"), true);
 			// 3. 요청 처리
 			while (true) {
 				
 				String request = bufferedReader.readLine(); // blocking
-				System.out.println("ChatServerThread : "+request);
-				//System.out.println(request);
 				if (request == null) {
-					log("클라이언트로 부터 연결 끊김");
 					doQuit(printWriter);
 					break;
 				}
@@ -89,28 +86,31 @@ public class ChatServerThread extends Thread {
 
 	private void doQuit(PrintWriter writer) {
 		removeWriter(writer);
-
+		broadcast(nickname+"님이 퇴장했습니다.",true);
 	}
 
 	private void removeWriter(PrintWriter writer) {
 		// 구현하기
-		System.out.println(" removeWriter");
+		synchronized (listWriters) {
+			listWriters.remove(writer);
+		}
 	}
 
-	private void doMessage(String string) {
+	private void doMessage(String data) {
 		// 구현하기
-		System.out.println(" doMessage");
-
+		broadcast(data,false);
+		
 	}
 
 	private void doJoin(String nickName, PrintWriter writer) {
 		this.nickname = nickName;
-		String data = nickName + "님이 참여하였습니다.";
-		broadcast(data);
+		String data = nickName + "님이 입장했습니다.";
+		//System.out.println(data);
+		broadcast(data,true);
 		/* Writer을 Writer pool에 저장 */
 		addWriter(writer);
 		// ack
-		writer.println("join:ok");
+		writer.println("채팅방에 입장했습니다.");
 		writer.flush();
 	}
 
@@ -124,10 +124,12 @@ public class ChatServerThread extends Thread {
 	/***
 	 * 서버에 연결된 모든 클라이언트에 메시지를 보내는 메소드 스레드간 공유객체인 listWriters에 접근하기 때문에 동기화 처리를 해줘야함
 	 */
-	private void broadcast(String data) {
+	private void broadcast(String data,boolean intro) {
 		synchronized (listWriters) {
 			for (PrintWriter writer : listWriters) {
-				writer.println(data);
+				if(intro==false)
+				writer.println(nickname+":"+data);
+				else writer.println(data);
 				writer.flush();
 			}
 		}

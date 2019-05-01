@@ -26,16 +26,34 @@ public class ChatClient {
 			// 서버 연결
 			socket.connect(new InetSocketAddress(SERVER_IP, 6000));
 			// reader/writer 생성
-			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "utf-8"), true);
+
+			// join 프로토콜
+			System.out.print("닉네임>>");
+			String nickName = scanner.nextLine();
+			pw.println("join:" + nickName);
+			pw.flush();
+			 
+//			ChatClientReceiveThread start
+			Thread thread= new ChatClientReceiveThread(nickName,socket);
+			thread.start();
+			
+			// keyboard input
 			while (true) {
-				// join 프로토콜
-				System.out.print("닉네임>>");
-				String nickName = scanner.nextLine();
-				System.out.println(nickName);
-				pw.println("join:" + nickName);
-				pw.flush();
-				//String data=br.readLine();
+				System.out.print(">>");
+				String input=scanner.nextLine();
+				if("quit".equals(input)){
+					//8. quit  처리 
+					pw.println("quit:" + nickName);
+					break;
+
+				}else{
+					//9. message 처리 
+					pw.println("message:" + input);
+
+				}
+				//pw.flush();
 			}
 
 		} catch (UnknownHostException e) {

@@ -16,16 +16,17 @@ import java.net.SocketException;
  */
 public class ChatClientReceiveThread extends Thread {
 	private Socket socket;
-	public ChatClientReceiveThread(Socket socket) {
+	private String nick;
+	public ChatClientReceiveThread(String nick,Socket socket) {
 		this.socket = socket;
+		this.nick=nick;
 	}
 
 	@Override
 	public void run() {
 		try {
 			
-			BufferedReader br=new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF-8"));
-			PrintWriter pw=new PrintWriter(new OutputStreamWriter(socket.getOutputStream(),"UTF-8"));
+			BufferedReader br=new BufferedReader(new InputStreamReader(socket.getInputStream(),"utf-8"));
 			
 			while(true) {
 				String data=br.readLine();
@@ -33,8 +34,7 @@ public class ChatClientReceiveThread extends Thread {
 					ChatServer.log("closed by client");
 					break;
 				}
-				ChatServer.log("received: "+data);
-				pw.println(data);
+				System.out.println(data);
 				
 			}
 		

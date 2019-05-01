@@ -18,15 +18,13 @@ import java.util.Scanner;
  * */
 public class MainThread {
 	public static final int PORT=6000;
+	public static List<PrintWriter> listWriters=new ArrayList<PrintWriter>();
  public static void main(String[] args) {
 	 ServerSocket serverSocket=null;
-	 Scanner scanner=null;
-		List<PrintWriter> listWriters=new ArrayList<PrintWriter>();
 	 try {
 		 
 		 //1. 서버 소켓 생성
 		serverSocket=new ServerSocket();
-		scanner=new Scanner(System.in);
 		//2. 바인딩
 		String hostAddress=InetAddress.getLocalHost().getHostAddress();
 		serverSocket.bind(new InetSocketAddress(hostAddress,PORT));
@@ -36,8 +34,8 @@ public class MainThread {
 			//wait for connecting ( accept )
 			Socket socket=serverSocket.accept();
 			new ChatServerThread(socket,listWriters).start();
-		}
-		
+ 		}
+		 
 	}catch (SocketException e) {
 		e.printStackTrace();
 	} catch (IOException e) {
