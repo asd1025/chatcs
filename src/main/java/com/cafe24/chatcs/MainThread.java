@@ -22,7 +22,7 @@ public class MainThread {
 		 //1. 서버 소켓 생성
 		serverSocket=new ServerSocket();
 		//2. 바인딩
-		String hostAddress=InetAddress.getLocalHost().getHostAddress();
+		String hostAddress="0.0.0.0";
 		serverSocket.bind(new InetSocketAddress(hostAddress,PORT));
 		log("연결 기다림 "+hostAddress+" : "+PORT);
 		//3. 요청대기
