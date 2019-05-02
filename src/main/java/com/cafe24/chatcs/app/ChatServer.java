@@ -24,6 +24,7 @@ public static void main(String[] args) {
 	try {
 		serverSocket=new ServerSocket();
 		hostAddress = InetAddress.getLocalHost().getHostAddress();
+		System.out.println(hostAddress+" ............");
 		serverSocket.bind(new InetSocketAddress(hostAddress, PORT));
 		
 		while(true) {
