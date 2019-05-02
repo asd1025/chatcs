@@ -41,19 +41,16 @@ public class ChatClient {
 			
 			// keyboard input
 			while (true) {
-				System.out.print(">>");
 				String input=scanner.nextLine();
 				if("quit".equals(input)){
 					//8. quit  처리 
-					pw.println("quit:" + nickName);
+					pw.println("quit:true");
 					break;
 
 				}else{
 					//9. message 처리 
 					pw.println("message:" + input);
-
 				}
-				//pw.flush();
 			}
 
 		} catch (UnknownHostException e) {

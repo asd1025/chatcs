@@ -3,13 +3,11 @@ package com.cafe24.chatcs;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -26,15 +24,10 @@ public class ChatServerThread extends Thread {
 	 */
 	private String nickname;
 	private Socket socket;
-	public static List<PrintWriter> listWriters;
+	public  List<PrintWriter> listWriters;
 	BufferedReader bufferedReader = null;
 	PrintWriter printWriter = null;
- 
-//
-//	public ChatServerThread(Socket socket) {
-//		this.socket = socket;
-//	}
-
+	private boolean isClosed;
 	public ChatServerThread(Socket socket, List<PrintWriter> listWriters) {
 		this.socket = socket;
 		this.listWriters = listWriters;
@@ -52,30 +45,43 @@ public class ChatServerThread extends Thread {
 		try {
 			bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "utf-8"));
 			printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "utf-8"), true);
+			isClosed=false;
 			// 3. 요청 처리
 			while (true) {
 				
 				String request = bufferedReader.readLine(); // blocking
 				if (request == null) {
+					if(!isClosed) {
+						System.out.println("reqeust NULL");
 					doQuit(printWriter);
+					}
 					break;
 				}
 
 				// 4. 프로토콜 분석
 				String[] tokens = request.split(":");
+				
 				if ("join".equals(tokens[0])) {
 					doJoin(tokens[1], printWriter);
 				} else if ("message".equals(tokens[0])) {
+					if(tokens.length>1) {
 					doMessage(tokens[1]);
+					}
 				} else if ("quit".equals(tokens[0])) {
-					doQuit(printWriter);
+					if(tokens[1].equals("true")) {
+						doQuit(printWriter);
+						isClosed=true;
+					}
 				} else {
-					ChatServer.log("에러: 알수 없는 요청(" + tokens[0] + ")");
+					System.out.println("에러: 알수 없는 요청(" + tokens[0] + ")");
 				}
 			}
 
 		}catch (SocketException e) { 
 			//이거 없으면 에러 뜸.. 클라이언트에서 접속 끊을 때 
+			if(isClosed==false) {
+				doQuit(printWriter);
+			}
 		}   catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -104,13 +110,12 @@ public class ChatServerThread extends Thread {
 
 	private void doJoin(String nickName, PrintWriter writer) {
 		this.nickname = nickName;
-		String data = nickName + "님이 입장했습니다.";
-		//System.out.println(data);
+		String data =  nickName+ "님이 입장했습니다.";
 		broadcast(data,true);
 		/* Writer을 Writer pool에 저장 */
 		addWriter(writer);
 		// ack
-		writer.println("채팅방에 입장했습니다.");
+		writer.println("입장하였습니다. 즐거운 채팅 되세요");
 		writer.flush();
 	}
 

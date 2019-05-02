@@ -1,8 +1,5 @@
 package com.cafe24.chatcs;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -11,15 +8,14 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /*
  * 서버 소켓을 생성하고 클라이언트의 접속을 받아 쓰레드를 만들어 클라이언트의 처리를 함
  * */
 public class MainThread {
 	public static final int PORT=6000;
-	public static List<PrintWriter> listWriters=new ArrayList<PrintWriter>();
  public static void main(String[] args) {
+	 List<PrintWriter> listWriters=new ArrayList<PrintWriter>();
 	 ServerSocket serverSocket=null;
 	 try {
 		 
