@@ -19,8 +19,7 @@ public class ChatClient {
 		Scanner scanner = null;
 
 		try {
-			SERVER_IP = "0.0.0.0";
-			System.out.println(SERVER_IP+">>>>>>>>>>>>>");
+			SERVER_IP = "192.168.1.145";
 			scanner = new Scanner(System.in);
 			// 소켓 생성
 			socket = new Socket();

@@ -23,9 +23,8 @@ public static void main(String[] args) {
 	
 	try {
 		serverSocket=new ServerSocket();
-		hostAddress = InetAddress.getLocalHost().getHostAddress();
-		System.out.println(hostAddress+" ............");
-		serverSocket.bind(new InetSocketAddress(hostAddress, PORT));
+		//hostAddress = InetAddress.getLocalHost().getHostAddress();
+		serverSocket.bind(new InetSocketAddress("0.0.0.0", PORT));
 		
 		while(true) {
 			Socket socket=serverSocket.accept();
