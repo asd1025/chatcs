@@ -25,7 +25,7 @@ public static void main(String[] args) {
 		serverSocket=new ServerSocket();
 		//hostAddress = InetAddress.getLocalHost().getHostAddress();
 		serverSocket.bind(new InetSocketAddress("0.0.0.0", PORT));
-		
+		System.out.println("연결중 "+PORT);
 		while(true) {
 			Socket socket=serverSocket.accept();
 			new ChatServerThread(socket, listWriters).start();
