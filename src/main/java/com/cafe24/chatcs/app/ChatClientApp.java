@@ -37,7 +37,7 @@ public class ChatClientApp {
 		// 3. join 성공
 		 
 			try {
-				server_ip=InetAddress.getLocalHost().getHostAddress();
+				server_ip="0.0.0.0";
 				socket = new  Socket();
 				socket.connect(new InetSocketAddress(server_ip, ChatServer.PORT));
 				

@@ -19,7 +19,8 @@ public class ChatClient {
 		Scanner scanner = null;
 
 		try {
-			SERVER_IP = InetAddress.getLocalHost().getHostAddress();
+			SERVER_IP = "0.0.0.0";
+			System.out.println(SERVER_IP+">>>>>>>>>>>>>");
 			scanner = new Scanner(System.in);
 			// 소켓 생성
 			socket = new Socket();
